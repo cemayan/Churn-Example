@@ -6,6 +6,11 @@ npm install
 
 # Kullanım
 ```javascript
-yarn start or npm  start
+yarn start
 ```
 
+yada
+
+```javascript
+npm  start
+```
