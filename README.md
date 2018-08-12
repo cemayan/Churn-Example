@@ -4,7 +4,7 @@
 pip install -r requirements.txt
 ```
 
-ile gereklü paketleri yükleyebilirsiniz.
+ile gerekli paketleri yükleyebilirsiniz.
 
 # Kullanım
 
