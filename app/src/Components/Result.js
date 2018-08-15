@@ -16,6 +16,11 @@ class Result extends Component {
         <Icon name='right arrow' />
         <Divider></Divider>
 
+
+        {this.props.result == "success" &&
+        <Image   src='success.png' size='small' wrapped />
+        }
+
         
         {this.props.result == "0" &&
         <Image   src='relax.png' size='small' wrapped />

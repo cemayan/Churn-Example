@@ -2,17 +2,6 @@ import React,{Component} from 'react'
 import { Input,Button,Icon,Divider,Grid,Label,Dropdown } from 'semantic-ui-react'
 import axios from 'axios';
 
-const options_geo = [
-  { key: 'france', text: 'France', value: 'France' },
-  { key: 'spain', text: 'Spain', value: 'Spain' },
-  { key: 'germany', text: 'Germany', value: 'Germany' },
-]
-
-const options_gender = [
-  { key: 'male', text: 'Male', value: 'Male' },
-  { key: 'female', text: 'Female', value: 'Female' },
-]
-
 class NewData extends Component {
   constructor(){
     super()
@@ -49,6 +38,7 @@ class NewData extends Component {
   
   newDataClick()  {
 
+    var self = this
   
     const data= {
       CreditScore : this.state.credit,
@@ -72,8 +62,12 @@ class NewData extends Component {
             'Content-Type' : 'application/json',
           },
           body: JSON.stringify(data)
+    }).then(res=>res.json()).then(function(data){
+          self.setState({
+            result : data.result
+        })
+        self.props.result(data.result);
     })
-
   }
 
 
@@ -125,7 +119,11 @@ class NewData extends Component {
       <Input icon='write' fluid placeholder='EstimatedSalary' value={this.state.estimated} onChange={this.handleChange('estimated')} type="number" />
       </Grid.Column>
       <Grid.Column width={4} >
-      <Input icon='write' fluid placeholder='Exited' value={this.state.exited} onChange={this.handleChange('exited')} type="number" />
+      <select className="ui fluid selection dropdown" onChange={this.handleChange('exited')} placeholder="Exited" >
+        <option></option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+      </select>
       </Grid.Column>
 
      <Divider horizontal></Divider>

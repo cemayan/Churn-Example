@@ -26,8 +26,6 @@ from keras.layers import Dense
 
 file = 'churn.model'
 
-
-
 def train_data_with_keras():
     
     data = pd.read_csv('data/Churn_Modelling.csv')  
@@ -91,7 +89,7 @@ def train_data():
     data = pd.read_csv('data/Churn_Modelling.csv')  
     
     data_x = data.iloc[:,3:13].values
-    data_y = data.iloc[:,-1:].values
+    data_y = data.iloc[:,13].values
     
     #Her bir değer için onları sayısal değere çevirir)
     label_encoder = LabelEncoder()
@@ -127,14 +125,26 @@ def train_data():
     rfc.fit(x_train,y_train)
     
     pickle.dump(rfc,open(file,'wb'))
-    #y_pred = rfc.predict(x_test)
+    y_pred = rfc.predict(x_test)
     
     cm = confusion_matrix(y_test,y_pred)
     print(cm)
     #print(rfc.predict([[0,0,502,0,42,8,159661,3,1,0,113931]]))
 
+arr = []
 
-
+def get_all_data():
+    
+    with open('data/Churn_Modelling.csv') as csvfile:
+        fieldnames = ('RowNumber','CustomerId','Surname',
+                'CreditScore', 'Geography','Gender',
+                'Age','Tenure','Balance','NumOfProducts',
+                'HasCrCard','IsActiveMember','EstimatedSalary',
+                'Exited')
+        reader = csv.DictReader(csvfile,fieldnames)
+        for row in  reader:
+            arr.append(json.loads(json.dumps(row)))  
+    return  arr 
 
 
 
@@ -230,8 +240,12 @@ class WriterHandler(tornado.web.RequestHandler):
     def get(self):
           print("get")
     def post(self):
-        data = json.loads(self.request.body)
-        write_new_record(data)
+        try :
+            data = json.loads(self.request.body)
+            write_new_record(data)
+            self.write({ "result" : "success" }) 
+        except:      
+            self.write({ "result" : "fail" })
     def options(self):
         self.set_status(204)
         self.finish()
@@ -257,16 +271,39 @@ class TrainHandler(tornado.web.RequestHandler):
         self.finish()
 
 
+class DataHandler(tornado.web.RequestHandler):
+    
+    def set_default_headers(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header('Access-Control-Max-Age', 1000)
+        self.set_header('Content-type', 'application/json')
+
+    def get(self):
+        try :
+            self.write({ "result" : arr}) 
+        except:      
+            self.write({ "result" : "fail" })
+    def post(self):
+        self.finish()
+    def options(self):
+        self.set_status(204)
+        self.finish()
+
+
+
 
 def make_app():
     return tornado.web.Application([
         (r"/", WriterHandler),
         (r'/train', TrainHandler),
         (r'/classifier', ClassifierHandler),
+        (r'/allData', DataHandler),
     ])
 
 
 if __name__ == "__main__":  
+     get_all_data()
      app = make_app()
      app.listen(8888)
      print("listening 8888 ")

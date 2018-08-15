@@ -68,7 +68,7 @@ class PredictForm extends Component {
 
         <Divider horizontal></Divider>
       <Grid>
-      <NewData></NewData>
+      <NewData result={this.myCallback}></NewData>
       <Classifier result={this.myCallback}></Classifier>
       <Result result={this.state.result}></Result>
 

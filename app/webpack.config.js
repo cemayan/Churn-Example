@@ -6,7 +6,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: ['babel-loader'],
-      }
+      },
     ]
   },
   resolve: {
@@ -18,6 +18,7 @@ module.exports = {
     filename: 'bundle.js'
   },
   devServer: {
+    historyApiFallback: true,
     contentBase: './public'
   }
 };
